@@ -1,0 +1,1 @@
+export const background = require('./imgs/serveur.png')

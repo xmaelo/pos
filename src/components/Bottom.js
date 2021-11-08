@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, TouchableHighlight, StyleSheet, TouchableOpacity, Image, SafeAreaView} from 'react-native';
+import { View, TouchableHighlight, StyleSheet, TouchableOpacity, Image, SafeAreaView, Alert} from 'react-native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { useFocusEffect } from '@react-navigation/native';
 import {themes} from '../themes' 
-import { user, save, archive, home, login, exit } from '../assets'
+import { user, save, archive, home, login, exit, ok } from '../assets'
 
 
 const colors = themes.colors
@@ -16,7 +16,7 @@ export default function Bottom(props){
                 </TouchableOpacity>
                 {props.home ?
                     <TouchableOpacity onPress={() =>props.navigation.navigate("NewOrder")} >
-                        <Image source={archive} style={{width: 90, height: 90, marginTop: -40}} />
+                        <Image source={ok} style={{width: 90, height: 90, marginTop: -40}} />
                     </TouchableOpacity>
                     : props.order ?
                     
@@ -33,8 +33,8 @@ export default function Bottom(props){
 
                 }
                 {props.print ?
-                    <TouchableOpacity onPress={() =>props.navigation.navigate("Welcome")} >
-                        <Image source={exit} style={{width: 20, height: 20}} />
+                    <TouchableOpacity onPress={() =>Alert.alert('imprime la facture')} >
+                        <Image source={save} style={{width: 20, height: 20}} />
                     </TouchableOpacity>
                      :
                 !props.home ?

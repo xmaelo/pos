@@ -18,27 +18,29 @@ export default function Login(props){
         <View style={styles.container}>
             <Head navigation={props.navigation} logo />
             <ImageBackground source={background} resizeMode="cover" style={styles.image}>
-                <View style={styles.content}>
-                    <Text style={styles.Title}>Ouvrir une session</Text>
-                    <View style={{width: wp('80%'), marginTop: hp('8%')}}>
-                        <TextInput
-                            label="Username"
-                            mode='outlined'
-                            value={username}
-                            style={{backgroundColor: 'white', fontSize: 20}}
-                            onChangeText={text => setU(text)}
-                        />
-                        <View style={{height: 20}}/>
-                        <TextInput
-                            label="Password"
-                            style={{backgroundColor: 'white', fontSize: 20}}
-                            mode='outlined'
-                            secureTextEntry
-                            value={password}
-                            onChangeText={text => setPass(text)}
-                        />
+                <ScrollView>
+                    <View style={styles.content}>
+                        <Text style={styles.Title}>Ouvrir une session</Text>
+                        <View style={{width: wp('80%'), marginTop: hp('8%')}}>
+                            <TextInput
+                                label="Username"
+                                mode='outlined'
+                                value={username}
+                                style={{backgroundColor: 'white', fontSize: 20}}
+                                onChangeText={text => setU(text)}
+                            />
+                            <View style={{height: 20}}/>
+                            <TextInput
+                                label="Password"
+                                style={{backgroundColor: 'white', fontSize: 20}}
+                                mode='outlined'
+                                secureTextEntry
+                                value={password}
+                                onChangeText={text => setPass(text)}
+                            />
+                        </View>
                     </View>
-                </View>
+                </ScrollView>
                 <Bottom navigation={props.navigation} login/>
             </ImageBackground>
         </View>

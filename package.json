@@ -24,7 +24,9 @@
     "react-native-responsive-screen": "^1.4.2",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.9.0",
+    "react-native-splash-screen": "^3.2.0",
     "react-native-swipe-item": "^0.4.0",
+    "react-native-swipe-to-choice": "^0.1.1",
     "react-native-vector-icons": "^9.0.0",
     "rn-swipe-button": "^1.3.6",
     "styled-components": "^5.3.3"

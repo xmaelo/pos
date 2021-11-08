@@ -89,8 +89,9 @@ export default function Home(props){
                             // style={{ height: 50, width: 250, backgroundColor: 'white', borderRadius: 50 }}
                             // onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
                         >
-                            <Picker.Item label="Java" value="java" />
-                            <Picker.Item label="JavaScript" value="js" />
+                            <Picker.Item label="Dessert" value="java" />
+                            <Picker.Item label="Repas" value="js" />
+                            <Picker.Item label="Jus" value="u" />
                         </Picker>
                     </View>
                     <View style={styles.search}>
@@ -99,9 +100,11 @@ export default function Home(props){
 
                     <SafeAreaView style={styles.containers}>
                         <Animated.FlatList
-                            data={[{id: 1}, {id: 2}, {id: 2}]}
+                            data={[{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}]}
                             numColumns={2}
                             showsHorizontalScrollIndicator={false}
+                            showsHorizontalScrollIndicator={false}
+                            persistentScrollbar={false}
                             onScroll={Animated.event(
                                 [{nativeEvent: {contentOffset: {y: scrollY}}}],
                                 {useNativeDriver: true}
@@ -130,7 +133,8 @@ const styles = StyleSheet.create({
     },
     containers: {
         flex: 1,
-        paddingHorizontal: wp('3%')
+        paddingHorizontal: wp('3%'),
+        paddingBottom: 70,
     },
     image: {
         flex: 1,

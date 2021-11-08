@@ -9,7 +9,7 @@ import {
   import { StyleSheet, View, Image, Text, TouchableOpacity, Linking } from 'react-native';
   import React, { useState, useEffect } from 'react';
   import { createStackNavigator } from '@react-navigation/stack';
-
+  import SplashScreen from 'react-native-splash-screen';
   /************* SCREEN IMPORT ***************/
 import Welcome from '../screens/Welcome'
 import Home from '../screens/Home'
@@ -43,6 +43,9 @@ export default function _NAV_(props) {
   const [user, setUser] = useState({});
   const [initialRoute, setInitalRoute] = useState("Welcome");
 
+  React.useEffect(() => {    
+      SplashScreen.hide();
+  }, []);
 
   return (
         <NavigationContainer>

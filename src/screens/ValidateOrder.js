@@ -47,13 +47,13 @@ export default function ValidateOrder(props){
 
                         <View style={{flexDirection: 'column', justifyContent: 'space-between', ...styles.textCard}}>
                             <Text style={{...styles.head, color: colors.primary, fontSize: 15, fontWeight: 'bold'}}>
+                                Total: 8.500 FCFA
+                            </Text>
+                            <Text style={{...styles.head, color: colors.primary, fontSize: 15, fontWeight: 'bold'}}>
                                 Payé: 10.000 FCFA 
                             </Text>
                             <Text style={{...styles.head, color: colors.primary, fontSize: 15, fontWeight: 'bold'}}>
-                                Reste: 1.500 FCFA
-                            </Text>
-                            <Text style={{...styles.head, color: colors.primary, fontSize: 15, fontWeight: 'bold'}}>
-                                Total: 8.500 FCFA
+                                Reste: - 1.500 FCFA
                             </Text>
                         </View>
                     </View>

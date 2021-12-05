@@ -27,7 +27,7 @@ export default function Welcome(props){
                             railFillBackgroundColor={'white'}
                             shouldResetAfterSuccess
                             onSwipeSuccess={() =>
-                                props.navigation.navigate('Login')
+                                props.navigation.navigate('Home')
                             }
                             title="Glisser pour deverouiller"
                             titleColor={'white'}

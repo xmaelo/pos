@@ -9,6 +9,7 @@ import  Head  from '../components/Header'
 import  Bottom  from '../components/Bottom'
 import {Picker} from '@react-native-picker/picker';
 import { Switch, TextInput } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 const colors = themes.colors
 export default function ValidateOrder(props){
@@ -17,6 +18,12 @@ export default function ValidateOrder(props){
 
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
     const [nombre, setNombre] = React.useState('1');
+    const [table, setTable] = React.useState(null);
+
+    const {obx} = props.route.params
+    
+    const tables  = useSelector(p =>p.tables)
+
     const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
 
     function open() {
@@ -27,6 +34,30 @@ export default function ValidateOrder(props){
         pickerRef.current.blur();
     }
 
+    function renderPrice(){
+        let price = 0;
+        obx.selects.map(s => {
+            price = price + (isNaN(parseInt(s.quantity))? 1 : parseInt(s.quantity)) * s.price
+        })
+        return price * (isNaN(parseInt(nombre)) ? 1 : parseInt(nombre))
+    }
+
+    function returnCmd(){
+        const obj = {
+            table: table,
+            quantity: parseInt(nombre),
+            price: renderPrice(),
+            ...obx
+        }
+        return obj
+    }
+
+    
+
+      const opt = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
+
+      //date.toLocaleDateString('fr-FR', opt);
+      const date = new Date().toISOString('fr-FR', opt)
 
 
     return (
@@ -34,26 +65,20 @@ export default function ValidateOrder(props){
             <Head navigation={props.navigation} goBack logo menu/>
             <ImageBackground source={background} resizeMode="cover" style={styles.image}>
                 <View style={styles.content}>
-                    <Text style={styles.Title}>Validation</Text>
+                    <Text style={styles.Title}>Finalisation</Text>
 
                     <View style={[styles.card, styles.shadowProp]}>
                         
                         <View style={{...styles.textCard}}>
-                            <Text style={styles.head}>Date: 11/11/2021</Text>
-                            <Text style={styles.head}>Table: T01235</Text>
-                            <Text style={styles.desc}>No: 11203.10Z</Text>
+                            <Text style={styles.head}>Date: {date.split('T')[0]}</Text>
+                            <Text style={styles.head}>Table: {table&&table.trim() !== ""&&tables.filter(t =>t['@id'] === table)[0].name}</Text>
+                            
                         </View>
 
 
                         <View style={{flexDirection: 'column', justifyContent: 'space-between', ...styles.textCard}}>
                             <Text style={{...styles.head, color: colors.primary, fontSize: 15, fontWeight: 'bold'}}>
-                                Total: 8.500 FCFA
-                            </Text>
-                            <Text style={{...styles.head, color: colors.primary, fontSize: 15, fontWeight: 'bold'}}>
-                                Payé: 10.000 FCFA 
-                            </Text>
-                            <Text style={{...styles.head, color: colors.primary, fontSize: 15, fontWeight: 'bold'}}>
-                                Reste: - 1.500 FCFA
+                                Total a payé: {renderPrice()}  FCFA 
                             </Text>
                         </View>
                     </View>
@@ -61,11 +86,13 @@ export default function ValidateOrder(props){
                             <Picker
                                 mode="dropdown"
                                 ref={pickerRef}
-                                selectedValue={null}
+                                selectedValue={table}
+                                onValueChange={(itemValue, itemIndex) => setTable(itemValue)}
                             >
                                 <Picker.Item label="Selectionner la table" value={null} />
-                                <Picker.Item label="TO 1236" value="java" />
-                                <Picker.Item label="TO 1237" value="js" />
+                                {tables && tables.map(t =>
+                                    <Picker.Item label={t.name} value={t['@id']} />
+                                )}
                             </Picker>
                         </View>
                         <View style={{width: wp('90%'), marginTop: 10}}>
@@ -77,17 +104,8 @@ export default function ValidateOrder(props){
                                 onChangeText={text => setNombre(text)}
                             />
                         </View>
-                        <View style={{width: wp('90%'), marginTop: 10}}>
-                            <TextInput
-                                label="Montant encaissé"
-                                keyboardType = 'numeric'
-                                mode="outlined"
-                                value={nombre}
-                                onChangeText={text => setNombre(text)}
-                            />
-                        </View>
                 </View>
-                <Bottom navigation={props.navigation} print validation/>
+                <Bottom navigation={props.navigation} print validation obx={returnCmd} table={table&&table.trim() !== ""&&tables.filter(t =>t['@id'] === table)[0].name}/>
             </ImageBackground>
         </View>
     )

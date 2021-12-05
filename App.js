@@ -16,16 +16,20 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import { Provider, useDispatch } from 'react-redux';
 import _NAV_ from './src/navigation'
+import store from './src/reducer';
 
 
 
 const App = () => {
+
+
   return (
-    <>
+    <Provider store={store}>
       <StatusBar translucent={true} backgroundColor={'transparent'} />
       <_NAV_/>
-    </>
+    </Provider>
   );
 };
 

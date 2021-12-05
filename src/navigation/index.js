@@ -16,6 +16,9 @@ import Home from '../screens/Home'
 import Login from '../screens/Login'
 import NewOrder from '../screens/NewOrder'
 import ValidateOrder from '../screens/ValidateOrder'
+import { useDispatch } from 'react-redux';
+
+import { request_get, websocketUrl } from '../config';
 
 
 
@@ -42,9 +45,50 @@ export default function _NAV_(props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState({});
   const [initialRoute, setInitalRoute] = useState("Welcome");
+  const dispatch = useDispatch()
+
+  async function getTab(){
+    try {
+      //dispatch({type: "LOANDING"})
+      const tables = await request_get('tables')
+      if(tables&&tables['hydra:member']){
+        let t = tables['hydra:member']
+        dispatch({type: "SAVE_TABLE", tables: t})
+      }
+      //dispatch({type: "LOANDING"})
+    } catch (error) {
+      dispatch({type: "LOANDING"})
+      console.log('error fetching table >>', error) 
+    }
+  }
 
   React.useEffect(() => {    
-      SplashScreen.hide();
+    SplashScreen.hide();
+    getTab()
+
+    const socket = new window.WebSocket(websocketUrl);
+
+    console.log('socket socket socket socket', socket)
+    dispatch({type: "SAVE_SOCKET", socket: socket})
+
+    socket.onopen = function() {
+        console.log("CONNECTED");
+    };
+    socket.onerror  = function(e) {
+        console.log("error socket", e);
+    };
+    
+    socket.onmessage = function(e) {
+      try
+      {
+          const message = JSON.parse(e.data);
+          console.log('message +++', message)
+      }
+      catch(e)
+      {
+        console.log('error socket', e)
+      }
+    };
   }, []);
 
   return (

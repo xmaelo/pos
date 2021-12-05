@@ -9,6 +9,9 @@ import  Head  from '../components/Header'
 import  Bottom  from '../components/Bottom'
 import {Picker} from '@react-native-picker/picker';
 import { Switch } from 'react-native-paper';
+import { request_get, request_post, imageBase } from '../config';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 const colors = themes.colors
 const ITEM_MARGIN_BOTTOM = 8;
@@ -21,6 +24,51 @@ const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 export default function Home(props){
     const pickerRef = useRef();
     const scrollY = React.useRef(new Animated.Value(0)).current;
+
+    const [menus, setMenus] = React.useState([])
+    const [choice, setChoice] = React.useState(null)
+
+    const initalMenu = useSelector(p => p.consommables)
+
+    const dispatch = useDispatch()
+
+    React.useEffect(()=>{
+        (async()=>{
+            
+            onReload()
+            //dispatch({type: "LOANDING"})
+        })()
+    }, [])
+
+    function onFilter(itemValue){
+        if(itemValue){
+            setMenus(initalMenu.filter(a =>a.typeConsommable?.task_name === itemValue))
+        }else{
+            setMenus(initalMenu)
+        }
+        setChoice(itemValue)
+    }
+
+    async function onReload(){
+
+        console.log('onReloadonReload onReload start here')
+        dispatch({type: "LOANDING"})
+        try {
+          const tables = await request_get('consommables')
+        
+         // setTableLoad(false)
+          if(tables&&tables['hydra:member']){
+            let t = tables['hydra:member']
+            console.log('t*************', t)
+            setMenus(t)
+            dispatch({type: "SAVE_CONSO", consommables: t})
+          }
+        } catch (error) {
+          console.log('error fetching table >>', error)
+          //setTableLoad(false)  
+        }
+        dispatch({type: "LOANDING"})
+    }
 
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
     const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
@@ -57,17 +105,17 @@ export default function Home(props){
                 >
                     <View style={[styles.card, styles.shadowProp]}>
                         <View>
-                            <Image source={dg} style={{width: '100%', height: 80}} />
+                            <Image source={{uri: imageBase+item.picture}} style={{width: '100%', height: 100}} />
                         </View>
                         <View style={{...styles.textCard}}>
-                            <Text style={styles.head}>Poulet DG</Text>
-                            <Text style={styles.desc}>Tomates, Pommes, et ..</Text>
+                            <Text style={styles.head}>{item.name}</Text>
+                            <Text style={styles.desc}>{item.description}</Text>
                         </View>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', ...styles.textCard}}>
                             <Text style={{...styles.head, color: colors.primary, fontSize: 12, fontWeight: 'bold'}}>
-                                11.500 FCFA
+                                {item.price} FCFA
                             </Text>
-                            <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
+                            {/* <Switch value={isSwitchOn} onValueChange={onToggleSwitch} /> */}
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
@@ -85,13 +133,14 @@ export default function Home(props){
                         <Picker
                             mode="dropdown"
                             ref={pickerRef}
-                            selectedValue={"Java"}
+                            selectedValue={choice}
                             // style={{ height: 50, width: 250, backgroundColor: 'white', borderRadius: 50 }}
-                            // onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+                            onValueChange={(itemValue, itemIndex) => onFilter(itemValue)}
                         >
-                            <Picker.Item label="Dessert" value="java" />
-                            <Picker.Item label="Repas" value="js" />
-                            <Picker.Item label="Jus" value="u" />
+                            <Picker.Item label="Tous" value={null} />
+                            <Picker.Item label="Dessert" value="dessert" />
+                            <Picker.Item label="Repas" value="repas" />
+                            <Picker.Item label="Boisson" value="boisson" />
                         </Picker>
                     </View>
                     <View style={styles.search}>
@@ -100,7 +149,7 @@ export default function Home(props){
 
                     <SafeAreaView style={styles.containers}>
                         <Animated.FlatList
-                            data={[{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}]}
+                            data={menus}
                             numColumns={2}
                             showsHorizontalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}

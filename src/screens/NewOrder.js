@@ -12,80 +12,124 @@ import { Button, Surface, Provider } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SwipeToChoice from 'react-native-swipe-to-choice';
+import { useDispatch, useSelector } from 'react-redux';
+import { imageBase, request_get } from '../config';
+
 const colors = themes.colors
+
 
 
 
 function Drop(props) {
 
-    const [items, setItems] = useState([
-        {
-          label: 'Repas', 
-          value: 'repas',
-        },
-        {
-          label: 'Riz', 
-          value: 'riz',
-          parent: 'repas',
-          icon: () => <Image source={dg} style={styles.iconStyle} />
-        },
-        {
-          label: 'Banana', 
-          value: 'banana',
-          parent: 'repas',
-          icon: () => <Image source={dg} style={styles.iconStyle} />
-        },
-        {
-          label: 'Banana2', 
-          value: 'banana2',
-          parent: 'repas',
-          icon: () => <Image source={dg} style={styles.iconStyle} />
-        },
-        {
-          label: 'Banana3', 
-          value: 'banana3',
-          parent: 'repas',
-          icon: () => <Image source={dg} style={styles.iconStyle} />
-        },
-        {
-            label: 'Dessert', 
-            value: 'dessert',
-        },
-        {
-            label: 'Pasteque', 
-            value: 'pasteque',
-            parent: 'dessert',
-            icon: () => <Image source={dg} style={styles.iconStyle} />
-        },
-        {
-            label: 'Orange', 
-            value: 'orange',
-            parent: 'dessert',
-            icon: () => <Image source={dg} style={styles.iconStyle} />
-        },
-        {
-            label: 'Boisson', 
-            value: 'boisson',
-        },
-        {
-            label: '33', 
-            value: '33',
-            parent: 'boisson',
-            icon: () => <Image source={dg} style={styles.iconStyle} />
-        },
-        {
-            label: 'Jus', 
-            value: 'jus',
-            parent: 'boisson',
-            icon: () => <Image source={dg} style={styles.iconStyle} />
-        },
-    ]);
+    const menus = useSelector(p =>{
+        const t = [
+            {
+                label: 'Repas', 
+                value: 'repas',
+            },
+            {
+                label: 'Dessert', 
+                value: 'dessert',
+            },
+            {
+                label: 'Boisson', 
+                value: 'boisson',
+            },
+        ]
+
+        return t.concat(p.consommables.map(c => { 
+            return {
+                parent: c.typeConsommable?.task_name, 
+                label: c.name, 
+                value: c, 
+                icon: () => <Image source={{uri: imageBase+c.picture}} style={styles.iconStyle} />,
+                ...c
+            }
+        }))
+    })
+
+    const dispatch = useDispatch()
+
+    const setItems = (items) =>{
+
+    }
+
+    React.useEffect(()=>{
+        (async()=>{
+            // onReload()
+        })()
+    }, [])
+
+
+    // const [items, setItems] = useState([
+    //     {
+    //       label: 'Repas', 
+    //       value: 'repas',
+    //     },
+    //     {
+    //       label: 'Riz', 
+    //       value: 'riz',
+    //       parent: 'repas',
+    //       icon: () => <Image source={dg} style={styles.iconStyle} />
+    //     },
+    //     {
+    //       label: 'Banana', 
+    //       value: 'banana',
+    //       parent: 'repas',
+    //       icon: () => <Image source={dg} style={styles.iconStyle} />
+    //     },
+    //     {
+    //       label: 'Banana2', 
+    //       value: 'banana2',
+    //       parent: 'repas',
+    //       icon: () => <Image source={dg} style={styles.iconStyle} />
+    //     },
+    //     {
+    //       label: 'Banana3', 
+    //       value: 'banana3',
+    //       parent: 'repas',
+    //       icon: () => <Image source={dg} style={styles.iconStyle} />
+    //     },
+    //     {
+    //         label: 'Dessert', 
+    //         value: 'dessert',
+    //     },
+    //     {
+    //         label: 'Pasteque', 
+    //         value: 'pasteque',
+    //         parent: 'dessert',
+    //         icon: () => <Image source={dg} style={styles.iconStyle} />
+    //     },
+    //     {
+    //         label: 'Orange', 
+    //         value: 'orange',
+    //         parent: 'dessert',
+    //         icon: () => <Image source={dg} style={styles.iconStyle} />
+    //     },
+    //     {
+    //         label: 'Boisson', 
+    //         value: 'boisson',
+    //     },
+    //     {
+    //         label: '33', 
+    //         value: '33',
+    //         parent: 'boisson',
+    //         icon: () => <Image source={dg} style={styles.iconStyle} />
+    //     },
+    //     {
+    //         label: 'Jus', 
+    //         value: 'jus',
+    //         parent: 'boisson',
+    //         icon: () => <Image source={dg} style={styles.iconStyle} />
+    //     },
+    // ]);
   
     return (
       <DropDownPicker
         open={props.open}
         value={props.value}
-        items={items}
+        items={menus}
         searchable={true}
         mode="BADGE"
         categorySelectable={false}
@@ -106,22 +150,88 @@ export default function NewOrder(props){
     const scrollY = React.useRef(new Animated.Value(0)).current;
     const [repas, setRepas] = useState([]);
     const [openRepas, setOpenRepas] = useState(false);
+    const [objQ, setObjq] = React.useState({});
+    const [status, setStatus] = React.useState(null);
 
 
     const [showRepas, onRepas] = useState(false);
 
+    console.log('repas **********************', repas)
+
+    React.useEffect(function(){
+        onLoadTyeOnWait()
+      }, [])
+
+    async function onLoadTyeOnWait(){
+        try {
+          const result =  await request_get('order_states?page=1&task_name=en_attente')
+          if(result&&result['hydra:member']&&result['hydra:member'].length > 0){
+            setStatus(result['hydra:member'][0])
+          }
+        } catch (error) {
+          console.log('onLoadTyeOnWait', error)
+        }
+      }
+
+    function onCalculCommande(){
+          console.log('started saving', objQ, JSON.stringify(objQ))
+          
+          const now = new Date()
+          const obx = {
+            //   table: table,
+              consommabes: repas.map(c => c['@id']),
+              selects: repas,
+              status: status && status['@id'],
+              time: new Date().toISOString(),
+              random: Math.floor(Math.random() * 5000)+"_"+now.getTime(),
+            //   quantity: parseInt(plateQuantity),
+            //   price: renderPrice(),
+              task: status.task_name,
+              object: JSON.stringify(objQ)
+          }
+        //   setDisabled(true)
+    
+          console.log('obx after pos ****************', obx)
+          return obx
+        //   const result = await request_post("commandes", obx)
+        //   const r = await socket.send(JSON.stringify(obx));
+          //await dispatch({type: "NEW_ORDER", random: obx.random})
+        //   await onOrder(obx)
+        //   setDisabled(false)
+          
+        //   handleClose()
+      }
+
+    function onUpQuantity(item){
+        setRepas(repas.map(r =>{
+            if(r.id === item.id) return {...r, quantity: r.quantity  ? r.quantity+1 : 2}
+            return {...r}
+        }))
+
+        const v = objQ
+        v[item.id] = v[item.id] ? v[item.id] + 1 : 1
+        setObjq(v)
+    }
+    function onReduseQuantity(item){
+        setRepas(repas.map(r =>{
+            if(r.id === item.id) return {...r, quantity: r.quantity && r.quantity >1  ? r.quantity-1 : 1}
+            return {...r}
+        }))
+        const v = objQ
+        v[item.id] = v[item.id] && v[item.id] > 1 ? v[item.id] - 1 : 1
+        setObjq(v)
+    }
     const renderItem = ({item, index}) => {
         
         return (
             <View style={{paddingVertical: 5}}>
                 <SwipeToChoice
-                    onPressRight={() => Alert.alert('Incremente la quantité')}
-                    onPressLeft={() => Alert.alert('Suprimme')}
+                    onPressRight={() => onUpQuantity(item)}
+                    onPressLeft={() => onReduseQuantity(item)}
                     activeSwipeChoose={false}
                     buttonLeft={
                         <View
                             style={{
-                            backgroundColor: null, 
                             flex: 1,
                             width: wp('10%'),
                             justifyContent: 'center',
@@ -130,32 +240,33 @@ export default function NewOrder(props){
                             }}
                         >
                             
-                            <Ionicons name="trash" color={colors.primary} size={30}/>
+                            <Ionicons name="remove-circle" color={colors.primary} size={40} style={{backgroundColor: 'white', borderRadius: 100}}/>
                         </View>
                     }
                     buttonRight={
                         <View
                             style={{
                             flex: 1,
-                            width: wp('15%'),
+                            // width: wp('15%'),
                             justifyContent: 'center',
                             alignItems: 'center',
                             borderRadius: 100,
+                            
                             }}
                         >
-                            <Ionicons name="add-circle" color={colors.primary} size={30}/>
+                            <Ionicons name="add-circle" color={colors.primary} size={40} style={{backgroundColor: 'white', borderRadius: 100}}/>
                         </View>
                     }
                 >
                     <Surface style={{...styles.surface, flexDirection: 'row', justifyContent: 'space-between', height: 80,}}>
-                        <Image source={dg} style={styles.imageFood} />
-                        <View>
-                            <Text>RIZ</Text>
-                            <Text>poulet bien cussiner etc..</Text>
+                        <Image source={{uri: imageBase+item.picture}} style={styles.imageFood} />
+                        <View style={{paddingLeft: 7}}>
+                            <Text>{item.name}</Text>
+                            <Text>{item.description?.slice(0, 20)+""+(item.description.length > 20 && " ...")} </Text>
                         </View>
                         <View>
-                            <Text>Quantité: 1</Text>
-                            <Text style={{color: colors.primary}} >17 000 FCFA</Text>
+                            <Text>Quantité: {item.quantity ? item.quantity : 1}</Text>
+                            <Text style={{color: colors.primary}} >{item.price} FCFA</Text>
                         </View>
                     </Surface>
                 </SwipeToChoice>
@@ -179,7 +290,7 @@ export default function NewOrder(props){
                             labelStyle={{color: 'white'}} 
                             mode="contained" 
                             uppercase={false}
-                            onPress={() => onRepas(true)}
+                            //onPress={() => onRepas(true)}
                         >
                             Repas
                         </Button>
@@ -188,7 +299,7 @@ export default function NewOrder(props){
                             style={styles.but} 
                             mode="contained" 
                             uppercase={false}
-                            onPress={() => onBoisson(true)}
+                            //onPress={() => onBoisson(true)}
                             color={colors.primary} labelStyle={{color: 'white'}}
                         >
                             Boisson
@@ -198,7 +309,7 @@ export default function NewOrder(props){
                             style={styles.but} 
                             uppercase={false}
                             mode="contained" 
-                            onPress={() => console.log('Pressed')}
+                            //onPress={() => console.log('Pressed')}
                             color={colors.primary} labelStyle={{color: 'white'}}
                         >
                             Dessert
@@ -238,8 +349,8 @@ export default function NewOrder(props){
                             /> 
                         </SafeAreaView>
                 </View>
-                <Bottom navigation={props.navigation} order/>
-            </ImageBackground>
+                <Bottom navigation={props.navigation} order obx={onCalculCommande}/>
+            </ImageBackground> 
         </View>
     )
 }

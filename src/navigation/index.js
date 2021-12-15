@@ -63,6 +63,7 @@ export default function _NAV_(props) {
   }
 
   React.useEffect(() => {    
+    console.log('socket socket socket socket')
     SplashScreen.hide();
     getTab()
 

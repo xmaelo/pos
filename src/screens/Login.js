@@ -12,18 +12,21 @@ import { Title, Text, TextInput  } from 'react-native-paper';
 const colors = themes.colors
 
 export default function Login(props){
-    const [username, setU] = useState('');
-    const [password, setPass] = useState("");
+    const [username, setU] = useState('serveur1');
+    const [password, setPass] = useState("serveur1");
+    function getValue(){
+        return {username, password}
+    }
     return (
         <View style={styles.container}>
-            <Head navigation={props.navigation} logo />
+            <Head navigation={props.navigation} logo login />
             <ImageBackground source={background} resizeMode="cover" style={styles.image}>
                 <ScrollView>
                     <View style={styles.content}>
                         <Text style={styles.Title}>Ouvrir une session</Text>
                         <View style={{width: wp('80%'), marginTop: hp('8%')}}>
                             <TextInput
-                                label="Username"
+                                label="Nom d'utilisateur"
                                 mode='outlined'
                                 value={username}
                                 style={{backgroundColor: 'white', fontSize: 20}}
@@ -31,7 +34,7 @@ export default function Login(props){
                             />
                             <View style={{height: 20}}/>
                             <TextInput
-                                label="Password"
+                                label="Mot de passe"
                                 style={{backgroundColor: 'white', fontSize: 20}}
                                 mode='outlined'
                                 secureTextEntry
@@ -41,7 +44,7 @@ export default function Login(props){
                         </View>
                     </View>
                 </ScrollView>
-                <Bottom navigation={props.navigation} login/>
+                <Bottom navigation={props.navigation} login={true} credentials={getValue}/>
             </ImageBackground>
         </View>
     )

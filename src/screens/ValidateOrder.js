@@ -36,8 +36,9 @@ export default function ValidateOrder(props){
 
     function renderPrice(){
         let price = 0;
+        const object =  obx.object ? JSON.parse(obx.object) : {} 
         obx.selects.map(s => {
-            price = price + (isNaN(parseInt(s.quantity))? 1 : parseInt(s.quantity)) * s.price
+            price = price + (isNaN(parseInt(object[s.id]))? 1 : parseInt(object[s.id])) * s.price
         })
         return price * (isNaN(parseInt(nombre)) ? 1 : parseInt(nombre))
     }

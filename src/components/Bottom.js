@@ -5,9 +5,11 @@ import { useFocusEffect } from '@react-navigation/native';
 import {themes} from '../themes' 
 import { user, save, archive, home, login, exit, ok } from '../assets'
 
-import { request_post } from '../config';
+import { request_post, request_get, onLogin } from '../config';
 import { useDispatch, useSelector } from 'react-redux';
 import RNPrint from 'react-native-print';
+import jwt_decode from "jwt-decode";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const colors = themes.colors
@@ -16,6 +18,7 @@ export default function Bottom(props){
 
     const socket = useSelector(p => p.socket)
     const tables  = useSelector(p =>p.tables)
+    const user  = useSelector(p =>p.user)
 
     const dispatch = useDispatch()
 
@@ -25,6 +28,13 @@ export default function Bottom(props){
         console.log('obx *******************', obx)
         props.navigation.navigate("ValidateOrder", {obx: obx})
     }
+
+    function renderSinglePrice(order){
+        let sPrice = 0
+        const object =  order.object ? JSON.parse(order.object) : {}
+        order.consommabes&&order.consommabes.map((c, i) =>  sPrice = sPrice + (object[c.id] ? parseInt(object[c.id]) : 1) * parseFloat(c.price))
+        return sPrice
+      }
 
 
     async function printHTML(order) {
@@ -44,6 +54,7 @@ export default function Bottom(props){
               <br/>
               Table: `+props.table+ `<br/>
               Date: `+(order.time?.split('T')[0])+`<br/>
+              Servir par: `+user.name+`<br/>
               Facture No: `+order['id']+`<br/>
               <hr style={{border: "none",
                   borderTop: "3px double #333",
@@ -71,7 +82,7 @@ export default function Bottom(props){
                   height: "5px"}}
               />
               <p style="marginTop: 5px">
-                <span style="float: right">`+order.quantity+" X "+price+ " FCFA" +`</span>
+                <span style="float: right">`+(order.quantity? order.quantity : 1)+" X "+renderSinglePrice(order)+ " FCFA" +`</span>
               </p>
               <br/>
               <br/>
@@ -99,7 +110,57 @@ export default function Bottom(props){
             console.log('error saving', error)
             dispatch({type: "LOANDING"})
         }
+    }
+
+    const storeData = async (value) => {
+        try {
+          const jsonValue = JSON.stringify(value)
+          await AsyncStorage.setItem('@auth', jsonValue)
+        } catch (e) {
+          // saving error
+          console.log('error async storage', e)
+        }
       }
+
+    async function onConnect(){
+        try {
+            const res = await onLogin(props.credentials())
+
+            if(res){
+                return props.navigation.navigate("Home")
+            }else{
+                Alert.alert('Problème de connexion !')
+            }
+        } catch (error) {
+            Alert.alert('Problème de connexion !')
+            dispatch({type: "LOANDING"})
+            console.log('error login', error)
+        }
+    }
+    
+    const createThreeButtonAlert = () =>
+        Alert.alert(
+        "Deconnexion",
+        "Voulez-vous vous deconnecter ?",
+        [
+            {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+            },
+            { text: "OK", onPress: () => onExit() }
+        ]
+    );
+
+    async function onExit(){
+        try{
+            props.navigation.navigate('Welcome')
+            await storeData(null)
+
+        }catch(e){
+            console.log('errror loagout', e)
+        }
+    }
     return (
         <View style={styles.Bottom}>
                 <TouchableOpacity onPress={() =>props.navigation.navigate("Home")} >
@@ -118,22 +179,23 @@ export default function Bottom(props){
                     <TouchableOpacity onPress={() =>onSaveCommande()} >
                         <Image source={archive} style={{width: 90, height: 90, marginTop: -40}} />
                     </TouchableOpacity> :
-                    <TouchableOpacity onPress={() =>props.navigation.navigate("Home")} >
+                    <TouchableOpacity onPress={() =>onConnect()} >
                         <Image source={login} style={{width: 90, height: 90, marginTop: -40}} />
                     </TouchableOpacity>
 
                 }
-                {props.print ?
+                {!props.login && (props.print ?
                     <TouchableOpacity onPress={() =>Alert.alert('imprime la facture')} >
                         {/* <Image source={save} style={{width: 20, height: 20}} /> */}
                     </TouchableOpacity>
                      :
-                !props.home ?
-                    <Image source={exit} style={{width: 20, height: 20}} />
-                     :
-                     <TouchableOpacity onPress={() =>props.navigation.navigate("Welcome")} >
+                    <TouchableOpacity onPress={() =>createThreeButtonAlert()} >
                         <Image source={exit} style={{width: 20, height: 20}} />
                     </TouchableOpacity>
+                )}
+
+                {
+                    props.login && <View/>
                 }
         </View>
     )

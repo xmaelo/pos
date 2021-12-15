@@ -31,6 +31,7 @@ export default function Head(props){
                 : props.menu &&
                 <Ionicons name="reload" color={colors.primary} size={25}/>
             }
+            {props.login && loading && <ActivityIndicator animating={true} color={colors.primary} />}
         </View>
     )
 }

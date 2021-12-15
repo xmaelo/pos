@@ -43,8 +43,9 @@ function Drop(props) {
                 parent: c.typeConsommable?.task_name, 
                 label: c.name, 
                 value: c, 
+                id:c.id,
                 icon: () => <Image source={{uri: imageBase+c.picture}} style={styles.iconStyle} />,
-                ...c
+                // ...c
             }
         }))
     })
@@ -149,6 +150,7 @@ export default function NewOrder(props){
 
     const scrollY = React.useRef(new Animated.Value(0)).current;
     const [repas, setRepas] = useState([]);
+    const [repas2, setRepas2] = useState([]);
     const [openRepas, setOpenRepas] = useState(false);
     const [objQ, setObjq] = React.useState({});
     const [status, setStatus] = React.useState(null);
@@ -156,11 +158,18 @@ export default function NewOrder(props){
 
     const [showRepas, onRepas] = useState(false);
 
+    const user = useSelector(p => p.user)
+
     console.log('repas **********************', repas)
 
     React.useEffect(function(){
         onLoadTyeOnWait()
       }, [])
+
+    function setRepas3(r){
+        setRepas(r)
+        setRepas2(r)
+    }
 
     async function onLoadTyeOnWait(){
         try {
@@ -187,7 +196,10 @@ export default function NewOrder(props){
             //   quantity: parseInt(plateQuantity),
             //   price: renderPrice(),
               task: status.task_name,
-              object: JSON.stringify(objQ)
+              object: JSON.stringify(objQ),
+              user: user['@id'],
+              user_id: user['@id'],
+              archived: false
           }
         //   setDisabled(true)
     
@@ -203,17 +215,18 @@ export default function NewOrder(props){
       }
 
     function onUpQuantity(item){
-        setRepas(repas.map(r =>{
+        const r = repas2.map(r =>{
             if(r.id === item.id) return {...r, quantity: r.quantity  ? r.quantity+1 : 2}
             return {...r}
-        }))
+        })
+        setRepas2(r)
 
         const v = objQ
-        v[item.id] = v[item.id] ? v[item.id] + 1 : 1
+        v[item.id] = v[item.id] ? v[item.id] + 1 : 2
         setObjq(v)
     }
     function onReduseQuantity(item){
-        setRepas(repas.map(r =>{
+        setRepas2(repas2.map(r =>{
             if(r.id === item.id) return {...r, quantity: r.quantity && r.quantity >1  ? r.quantity-1 : 1}
             return {...r}
         }))
@@ -262,7 +275,7 @@ export default function NewOrder(props){
                         <Image source={{uri: imageBase+item.picture}} style={styles.imageFood} />
                         <View style={{paddingLeft: 7}}>
                             <Text>{item.name}</Text>
-                            <Text>{item.description?.slice(0, 20)+""+(item.description.length > 20 && " ...")} </Text>
+                            <Text>{item.description?.slice(0, 20)+""+(item.description.length > 20 ?" ..." : '')} </Text>
                         </View>
                         <View>
                             <Text>Quantité: {item.quantity ? item.quantity : 1}</Text>
@@ -321,7 +334,7 @@ export default function NewOrder(props){
                                 open={openRepas} 
                                 value={repas}
                                 setOpen={setOpenRepas}
-                                setValue={setRepas}
+                                setValue={setRepas3}
                             />
                         </View>
 
@@ -329,7 +342,7 @@ export default function NewOrder(props){
 
                         <SafeAreaView style={styles.containers}>
                             <Animated.FlatList
-                                data={repas}
+                                data={repas2}
                                 // numColumns={2}
                                 showsHorizontalScrollIndicator={false}
                                 showsHorizontalScrollIndicator={false}

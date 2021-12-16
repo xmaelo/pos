@@ -12,8 +12,8 @@ import { Title, Text, TextInput  } from 'react-native-paper';
 const colors = themes.colors
 
 export default function Login(props){
-    const [username, setU] = useState('serveur1');
-    const [password, setPass] = useState("serveur1");
+    const [username, setU] = useState('');
+    const [password, setPass] = useState("");
     function getValue(){
         return {username, password}
     }
@@ -21,10 +21,11 @@ export default function Login(props){
         <View style={styles.container}>
             <Head navigation={props.navigation} logo login />
             <ImageBackground source={background} resizeMode="cover" style={styles.image}>
-                <ScrollView>
+
                     <View style={styles.content}>
                         <Text style={styles.Title}>Ouvrir une session</Text>
-                        <View style={{width: wp('80%'), marginTop: hp('8%')}}>
+                        <ScrollView style={{width: wp('80%'), marginTop: hp('8%'), paddingBottom: 50}}>
+                        <View style={{height: 20}}/>
                             <TextInput
                                 label="Nom d'utilisateur"
                                 mode='outlined'
@@ -41,9 +42,9 @@ export default function Login(props){
                                 value={password}
                                 onChangeText={text => setPass(text)}
                             />
-                        </View>
+                            <View style={{height: 20}}/>
+                        </ScrollView>
                     </View>
-                </ScrollView>
                 <Bottom navigation={props.navigation} login={true} credentials={getValue}/>
             </ImageBackground>
         </View>

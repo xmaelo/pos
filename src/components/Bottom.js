@@ -203,10 +203,11 @@ export default function Bottom(props){
 
 const styles = StyleSheet.create({
     Bottom: {
-        position: 'absolute',
+        // position: 'absolute',
         bottom: 0,
         width: '100%',
         paddingTop: 20,
+        // marginTop: 10,
         height: 60,
         flexDirection: 'row',
         justifyContent: 'space-between',

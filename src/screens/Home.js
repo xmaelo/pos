@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     containers: {
         flex: 1,
         paddingHorizontal: wp('3%'),
-        paddingBottom: 70,
+        paddingBottom: 30,
     },
     image: {
         flex: 1,

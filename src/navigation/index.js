@@ -15,6 +15,7 @@ import Welcome from '../screens/Welcome'
 import Home from '../screens/Home'
 import Login from '../screens/Login'
 import NewOrder from '../screens/NewOrder'
+import Order from '../screens/Order'
 import ValidateOrder from '../screens/ValidateOrder'
 import { useDispatch } from 'react-redux';
 
@@ -37,6 +38,7 @@ const stacks = [
   { comp: Login, name: "Login" },
   { comp: NewOrder, name: "NewOrder" },
   { comp: ValidateOrder, name: "ValidateOrder" },
+  { comp: Order, name: "Order" },
   // { comp: Drawers1, name: "Drawers1", join: true},
 ];
 
@@ -62,11 +64,7 @@ export default function _NAV_(props) {
     }
   }
 
-  React.useEffect(() => {    
-    console.log('socket socket socket socket')
-    SplashScreen.hide();
-    getTab()
-
+  function initSocket(){
     const socket = new window.WebSocket(websocketUrl);
 
     console.log('socket socket socket socket', socket)
@@ -77,6 +75,7 @@ export default function _NAV_(props) {
     };
     socket.onerror  = function(e) {
         console.log("error socket", e);
+        initSocket()
     };
     
     socket.onmessage = function(e) {
@@ -90,6 +89,15 @@ export default function _NAV_(props) {
         console.log('error socket', e)
       }
     };
+  }
+
+  React.useEffect(() => {    
+    console.log('socket socket socket socket')
+    SplashScreen.hide();
+    getTab()
+    initSocket()
+
+    
   }, []);
 
   return (

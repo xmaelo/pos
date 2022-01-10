@@ -95,8 +95,10 @@ export default function Bottom(props){
 
     async function onSaveCommande(){
         try {
-            let obx = props.obx()
+            let obx = props.obx() 
             
+            console.log('obx obx obx', obx)
+            //return
             if(obx&& !obx.table) return Alert.alert('Vous devez selectionner la table !')
           dispatch({type: "LOANDING"})
 
@@ -163,7 +165,7 @@ export default function Bottom(props){
     }
     return (
         <View style={styles.Bottom}>
-                <TouchableOpacity onPress={() =>props.navigation.navigate("Home")} >
+                <TouchableOpacity onPress={() =>props.navigation.navigate("Order")} >
                     <Image source={home} style={{width: 20, height: 20, opacity: !props.login? 1: 0}} />
                 </TouchableOpacity>
                 {props.home ?

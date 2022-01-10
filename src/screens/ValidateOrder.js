@@ -10,6 +10,7 @@ import  Bottom  from '../components/Bottom'
 import {Picker} from '@react-native-picker/picker';
 import { Switch, TextInput } from 'react-native-paper';
 import { useSelector } from 'react-redux';
+import { Checkbox } from 'react-native-paper';
 
 const colors = themes.colors
 export default function ValidateOrder(props){
@@ -19,6 +20,7 @@ export default function ValidateOrder(props){
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
     const [nombre, setNombre] = React.useState('1');
     const [table, setTable] = React.useState(null);
+    const [checked, setChecked] = React.useState(false);
 
     const {obx} = props.route.params
     
@@ -43,11 +45,12 @@ export default function ValidateOrder(props){
         return price * (isNaN(parseInt(nombre)) ? 1 : parseInt(nombre))
     }
 
-    function returnCmd(){
+    function returnCmd(){ 
         const obj = {
             table: table,
             quantity: parseInt(nombre),
             price: renderPrice(),
+            nonfacturer: checked,
             ...obx
         }
         return obj
@@ -103,6 +106,15 @@ export default function ValidateOrder(props){
                                 mode="outlined"
                                 value={nombre}
                                 onChangeText={text => setNombre(text)}
+                            />
+                        </View>
+                        <View style={{width: wp('90%'), marginTop: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: "white"}}>
+                            <Text style={{...styles.head, paddingLeft: 10}}>Ma commande</Text>
+                            <Checkbox
+                                status={checked ? 'checked' : 'unchecked'}
+                                onPress={() => {
+                                    setChecked(!checked);
+                                }}
                             />
                         </View>
                 </View>

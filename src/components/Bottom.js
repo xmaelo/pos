@@ -19,6 +19,7 @@ export default function Bottom(props){
     const socket = useSelector(p => p.socket)
     const tables  = useSelector(p =>p.tables)
     const user  = useSelector(p =>p.user)
+    const cart  = useSelector(p =>p.cart)
 
     const dispatch = useDispatch()
 
@@ -106,8 +107,9 @@ export default function Bottom(props){
           console.log('obx after pos ****************', result)
           const r = await socket.send(JSON.stringify(obx));
           dispatch({type: "LOANDING"})
+          dispatch({type: "CART", data: []})
           props.navigation.navigate("Home")
-          printHTML(result)
+          //printHTML(result)
         } catch (error) {
             console.log('error saving', error)
             dispatch({type: "LOANDING"})
@@ -163,13 +165,18 @@ export default function Bottom(props){
             console.log('errror loagout', e)
         }
     }
+    async function onNewOrder(){
+        if(cart.length ===0) return Alert.alert('Rien dans le panier !')
+        props.navigation.navigate("NewOrder")
+        
+    }
     return (
         <View style={styles.Bottom}>
                 <TouchableOpacity onPress={() =>props.navigation.navigate("Order")} >
                     <Image source={home} style={{width: 20, height: 20, opacity: !props.login? 1: 0}} />
                 </TouchableOpacity>
                 {props.home ?
-                    <TouchableOpacity onPress={() =>props.navigation.navigate("NewOrder")} >
+                    <TouchableOpacity onPress={() =>onNewOrder()} >
                         <Image source={ok} style={{width: 90, height: 90, marginTop: -40}} />
                     </TouchableOpacity>
                     : props.order ?

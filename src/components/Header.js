@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Alert, TouchableHighlight, StyleSheet, TouchableOpacity, ScrollView, TouchableWithoutFeedback, ImageBackground, Image, SafeAreaView} from 'react-native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {themes} from '../themes' 
 import { menu, back, logoB, logo2 } from '../assets'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -13,6 +13,9 @@ const colors = themes.colors
 export default function Head(props){
 
     const loading = useSelector(p=>p.loading)
+    const nav = useNavigation()
+
+    console.log('loadingloading loading', loading)
 
     return (
         <View style={{...styles.header, justifyContent: props.goBack?'space-between': 'center',}}>
@@ -22,9 +25,9 @@ export default function Head(props){
                 </TouchableWithoutFeedback>
             }
             {props.logo&&
-                <View >
+                <TouchableOpacity onPress={()=>nav.navigate('Home')} >
                     <Image source={logo2} style={{width: 150, height: 30}} />
-                </View>
+                </TouchableOpacity>
             }
             {props.menu && loading?
                 <ActivityIndicator animating={true} color={colors.primary} />

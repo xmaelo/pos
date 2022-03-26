@@ -63,69 +63,7 @@ function Drop(props) {
     }, [])
 
 
-    // const [items, setItems] = useState([
-    //     {
-    //       label: 'Repas', 
-    //       value: 'repas',
-    //     },
-    //     {
-    //       label: 'Riz', 
-    //       value: 'riz',
-    //       parent: 'repas',
-    //       icon: () => <Image source={dg} style={styles.iconStyle} />
-    //     },
-    //     {
-    //       label: 'Banana', 
-    //       value: 'banana',
-    //       parent: 'repas',
-    //       icon: () => <Image source={dg} style={styles.iconStyle} />
-    //     },
-    //     {
-    //       label: 'Banana2', 
-    //       value: 'banana2',
-    //       parent: 'repas',
-    //       icon: () => <Image source={dg} style={styles.iconStyle} />
-    //     },
-    //     {
-    //       label: 'Banana3', 
-    //       value: 'banana3',
-    //       parent: 'repas',
-    //       icon: () => <Image source={dg} style={styles.iconStyle} />
-    //     },
-    //     {
-    //         label: 'Dessert', 
-    //         value: 'dessert',
-    //     },
-    //     {
-    //         label: 'Pasteque', 
-    //         value: 'pasteque',
-    //         parent: 'dessert',
-    //         icon: () => <Image source={dg} style={styles.iconStyle} />
-    //     },
-    //     {
-    //         label: 'Orange', 
-    //         value: 'orange',
-    //         parent: 'dessert',
-    //         icon: () => <Image source={dg} style={styles.iconStyle} />
-    //     },
-    //     {
-    //         label: 'Boisson', 
-    //         value: 'boisson',
-    //     },
-    //     {
-    //         label: '33', 
-    //         value: '33',
-    //         parent: 'boisson',
-    //         icon: () => <Image source={dg} style={styles.iconStyle} />
-    //     },
-    //     {
-    //         label: 'Jus', 
-    //         value: 'jus',
-    //         parent: 'boisson',
-    //         icon: () => <Image source={dg} style={styles.iconStyle} />
-    //     },
-    // ]);
-  
+    
     return (
       <DropDownPicker
         open={props.open}
@@ -153,34 +91,39 @@ export default function NewOrder(props){
     const [repas2, setRepas2] = useState([]);
     const [openRepas, setOpenRepas] = useState(false);
     const [objQ, setObjq] = React.useState({});
-    const [status, setStatus] = React.useState(null);
+    //const [status, setStatus] = React.useState(null);
 
+    const cart = useSelector(p => p.cart)
+    const status = useSelector(p => p.status)
 
     const [showRepas, onRepas] = useState(false);
 
     const user = useSelector(p => p.user)
 
+    const dispatch = useDispatch()
+
     console.log('repas **********************', repas)
 
     React.useEffect(function(){
-        onLoadTyeOnWait()
+        // onLoadTyeOnWait()
       }, [])
 
-    function setRepas3(r){
-        setRepas(r)
-        setRepas2(r)
-    }
+    // function setRepas3(r){
+    //     setRepas(r)
+    //     setRepas2(r)
+    // }
 
-    async function onLoadTyeOnWait(){
-        try {
-          const result =  await request_get('order_states?page=1&task_name=en_attente')
-          if(result&&result['hydra:member']&&result['hydra:member'].length > 0){
-            setStatus(result['hydra:member'][0])
-          }
-        } catch (error) {
-          console.log('onLoadTyeOnWait', error)
-        }
-      }
+    // async function onLoadTyeOnWait(){
+    //     try {
+    //       const result =  await request_get('order_states?page=1&task_name=en_attente')
+    //       console.log("result result result", result)
+    //       if(result&&result['hydra:member']&&result['hydra:member'].length > 0){
+    //         setStatus(result['hydra:member'][0])
+    //       }
+    //     } catch (error) {
+    //       console.log('onLoadTyeOnWait', error)
+    //     }
+    //   }
 
     function onCalculCommande(){
           console.log('started saving', objQ, JSON.stringify(objQ))
@@ -188,8 +131,8 @@ export default function NewOrder(props){
           const now = new Date()
           const obx = {
             //   table: table,
-              consommabes: repas.map(c => c['@id']),
-              selects: repas,
+              consommabes: cart.map(c => c['@id']),
+              selects: cart,
               status: status && status['@id'],
               time: new Date().toISOString(),
               random: Math.floor(Math.random() * 5000)+"_"+now.getTime(),
@@ -215,21 +158,22 @@ export default function NewOrder(props){
       }
 
     function onUpQuantity(item){
-        const r = repas2.map(r =>{
+        const r = cart.map(r =>{
             if(r.id === item.id) return {...r, quantity: r.quantity  ? r.quantity+1 : 2}
             return {...r}
         })
-        setRepas2(r)
+        //setRepas2(r)
+        dispatch({type: "CART", data: r})
 
         const v = objQ
         v[item.id] = v[item.id] ? v[item.id] + 1 : 2
         setObjq(v)
     }
     function onReduseQuantity(item){
-        setRepas2(repas2.map(r =>{
+        dispatch({type: "CART", data: cart.map(r =>{
             if(r.id === item.id) return {...r, quantity: r.quantity && r.quantity >1  ? r.quantity-1 : 1}
             return {...r}
-        }))
+        })} )
         const v = objQ
         v[item.id] = v[item.id] && v[item.id] > 1 ? v[item.id] - 1 : 1
         setObjq(v)
@@ -294,7 +238,7 @@ export default function NewOrder(props){
 
             <ImageBackground source={background} resizeMode="cover" style={styles.image}>
                 <View style={styles.content}>
-                    <Text style={styles.Title}>Nouvelle commande</Text>
+                    <Text style={styles.Title}>Elements de la commande</Text>
                     
                     <View style={styles.button}>
                         <Button 
@@ -329,22 +273,21 @@ export default function NewOrder(props){
                         </Button>
                     </View>
                         <View style={{marginTop: 15}}>
-                            <Drop 
+                            {/* <Drop 
                                 placholder={"Selectionnez la commande"} 
                                 open={openRepas} 
                                 value={repas}
                                 setOpen={setOpenRepas}
                                 setValue={setRepas3}
-                            />
+                            /> */}
                         </View>
 
                         
 
                         <SafeAreaView style={styles.containers}>
                             <Animated.FlatList
-                                data={repas2}
+                                data={cart}
                                 // numColumns={2}
-                                showsHorizontalScrollIndicator={false}
                                 showsHorizontalScrollIndicator={false}
                                 persistentScrollbar={false}
                                 onScroll={Animated.event(

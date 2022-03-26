@@ -33,19 +33,28 @@ export default function Order(props){
         })()
     }, [])
 
+    async function run(){
+        console.log('started run')
+        try {
+            const result =  await request_get('commandes?order[id]=desc&time[after]='+new Date().toISOString().split('T')[0]+'&encaisse=false&user.username='+username)
+            if(result&&result['hydra:member']&&result['hydra:member'].length > 0){
+             // dispatch({type: 'CMD', orders: result['hydra:member']})
+             console.log("result['hydra:member']", result['hydra:member'])
+             setOrders(result['hydra:member'])
+            dispatch({type: "LOANDING", stop: true})
+
+        }
+        run()
+    } catch (error) {
+            console.log('onLoadTyeOnWait', error)
+            run()
+            dispatch({type: "LOANDING", stop: true})
+          }
+    }
     async function onGetOrder(){
         console.log('username username username', username)
         dispatch({type: "LOANDING"})
-        try {
-          const result =  await request_get('commandes?order[id]=desc&time[after]='+new Date().toISOString().split('T')[0]+'&encaisse=false&user.username='+username)
-          if(result&&result['hydra:member']&&result['hydra:member'].length > 0){
-           // dispatch({type: 'CMD', orders: result['hydra:member']})
-           console.log("result['hydra:member']", result['hydra:member'])
-           setOrders(result['hydra:member'])
-          }
-        } catch (error) {
-          console.log('onLoadTyeOnWait', error)
-        }
+        await run()
         dispatch({type: "LOANDING"})
     
       }

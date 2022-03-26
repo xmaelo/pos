@@ -8,15 +8,23 @@ import SwipeButton from 'rn-swipe-button';
 import  Head  from '../components/Header'
 import  Bottom  from '../components/Bottom'
 import { Title, Text, TextInput  } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 
 const colors = themes.colors
 
 export default function Login(props){
     const [username, setU] = useState('');
     const [password, setPass] = useState("");
+
+    const dispatch = useDispatch()
+
     function getValue(){
         return {username, password}
     }
+
+    useEffect(()=>{
+        dispatch({type: "LOANDING", stop: true})
+    }, [])
     return (
         <View style={styles.container}>
             <Head navigation={props.navigation} logo login />

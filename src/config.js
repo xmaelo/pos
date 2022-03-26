@@ -137,7 +137,7 @@ const storeData = async (value) => {
     // saving error
     console.log('error async storage', e)
   }
-}
+} 
 
 export async function onLogin(crendentials){
   try {
@@ -157,14 +157,14 @@ export async function onLogin(crendentials){
         console.log('>>> result getUser', user)
         store.dispatch({type: "SAVE_USER", user: user})
         await storeData(crendentials)
-        store.dispatch({type: "LOANDING"})
+        store.dispatch({type: "LOANDING", stop: true})
         return true
       }else{
-        store.dispatch({type: "LOANDING"})
+        store.dispatch({type: "LOANDING", stop: true})
         return false
       }
   } catch (error) {
     console.log('error error onLogin', error)
-    store.dispatch({type: "LOANDING"})
+    store.dispatch({type: "LOANDING", stop: true})
   }
 }

@@ -7,12 +7,18 @@ const defaultState = {
     tables: [],
     consommables: [],
     socket: null,
-    loading: false
+    loading: false,
+    cart: [],
+    status: {}
   };
   
   
   export default function store(state = defaultState, action) {
     switch (action.type) {
+      case 'CART':
+        const s = { ...state, cart: action.data }
+        console.log('set card', 123)
+        return {...s}
       case 'SAVE_HEADER':
         return { ...state, header: action.token };
       case 'SAVE_USER':
@@ -23,11 +29,14 @@ const defaultState = {
         return { ...state, socket: action.socket };   
       case 'SAVE_TABLE':
         return { ...state, tables: action.tables };
+      case 'STATUS':
+        return { ...state, status: action.data };
       case 'LOANDING':
-        return { ...state, loading: !state.loading };
+        return { ...state, loading: action.stop? false : !state.loading };
+      
             
       default:
-        return state;
+        return {...state};
     }
   }
   

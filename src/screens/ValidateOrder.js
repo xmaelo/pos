@@ -42,7 +42,7 @@ export default function ValidateOrder(props){
         obx.selects.map(s => {
             price = price + (isNaN(parseInt(object[s.id]))? 1 : parseInt(object[s.id])) * s.price
         })
-        return price * (isNaN(parseInt(nombre)) ? 1 : parseInt(nombre))
+        return price * ( isNaN(parseInt(nombre)) ? 1 : parseInt(nombre) )
     }
 
     function returnCmd(){ 
@@ -50,6 +50,7 @@ export default function ValidateOrder(props){
             table: table,
             quantity: parseInt(nombre),
             price: renderPrice(),
+            encaisse: false,
             nonfacturer: checked,
             ...obx
         }

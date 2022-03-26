@@ -83,7 +83,8 @@ const styles = StyleSheet.create({
         // paddingHorizontal: wp('10%')
     },
     SwipeButton: {
-        paddingTop: hp('60%'),
+        paddingTop: hp('50%'),
+        paddingBottom: hp('10%')
     },
     logo: {
         marginTop: hp('10%'),
